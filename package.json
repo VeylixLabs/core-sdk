@@ -1,14 +1,35 @@
 {
   "name": "veylix-sdk",
   "version": "0.1.0",
+  "description": "Official SDK for integrating with the VEYLIX decentralized 3D AI generation platform",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VeylixLabs/core-sdk.git"
+  },
+  "keywords": [
+    "veylix",
+    "web3",
+    "sdk",
+    "3d",
+    "ai",
+    "base",
+    "ethereum"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
-    "docs": "typedoc --entryPointStrategy expand ./src"
+    "test:watch": "vitest",
+    "docs": "typedoc --entryPointStrategy expand ./src",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
