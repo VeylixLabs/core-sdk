@@ -13,7 +13,7 @@
   - Create custom error classes (e.g., `VeylixAPIError`, `VeylixAuthError`) for better developer experience.
 
 ## 🚀 Mid-Term Goals (Sprint 2)
-- [ ] **Wallet/Auth Integration:** Add methods to generate SIWE (Sign-In with Ethereum) payloads.
+- [x] **Wallet/Auth Integration:** Add methods to generate SIWE (Sign-In with Ethereum) payloads.
 - [ ] **Testing:** Setup `Vitest` or `Jest` and write unit tests for the HTTP client mock requests.
 - [ ] **Documentation:** Setup typedoc to automatically generate API references from TypeScript comments.
 

@@ -1,16 +1,19 @@
 import { VeylixAPIError, VeylixAuthError, ApiResponse } from './errors';
 import { MarketplaceModule } from './modules/marketplace';
 import { AssetsModule } from './modules/assets';
+import { WalletModule } from './modules/wallet';
 
 export class VeylixClient {
   public baseUrl: string;
   public marketplace: MarketplaceModule;
   public assets: AssetsModule;
+  public wallet: WalletModule;
   
   constructor(baseUrl?: string) {
     this.baseUrl = baseUrl || "http://localhost:3000/api";
     this.marketplace = new MarketplaceModule(this);
     this.assets = new AssetsModule(this);
+    this.wallet = new WalletModule(this);
   }
 
   /**

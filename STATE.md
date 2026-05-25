@@ -23,7 +23,9 @@ The SDK has been successfully initialized as a standalone TypeScript package. It
    - [x] Implemented `getListings()` and `verifyAsset()`.
 4. **Assets Module (`src/modules/assets.ts`)**
    - [x] Implemented `getAssetDetails()` and `fetchIPFSMetadata()`.
-5. **Configuration**
+5. **Wallet Module (`src/modules/wallet.ts`)**
+   - [x] Implemented SIWE (Sign-In With Ethereum) payload generator and verifier.
+6. **Configuration**
    - [x] `tsconfig.json` optimized for strict type checking and modern Node runtimes.
    - [x] `tsup.config.ts` for blazing-fast builds.
 
