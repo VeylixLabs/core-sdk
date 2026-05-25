@@ -6,13 +6,15 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
-  },
-  "dependencies": {
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "docs": "typedoc --entryPointStrategy expand ./src"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.0.0"
+    "typedoc": "^0.28.19",
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.7"
   }
 }

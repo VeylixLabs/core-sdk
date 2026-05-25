@@ -10,7 +10,7 @@ export class VeylixClient {
   public wallet: WalletModule;
   
   constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || "http://localhost:3000/api";
+    this.baseUrl = baseUrl || "https://dapp.veylixlabs.xyz/api";
     this.marketplace = new MarketplaceModule(this);
     this.assets = new AssetsModule(this);
     this.wallet = new WalletModule(this);
