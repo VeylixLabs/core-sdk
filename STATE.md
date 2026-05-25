@@ -16,7 +16,14 @@ The SDK has been successfully initialized as a standalone TypeScript package. It
 1. **Core Client (`src/client.ts`)**
    - [x] Initialized `VeylixClient` class.
    - [x] Configurable `baseUrl` (defaults to `http://localhost:3000/api`).
-2. **Configuration**
+   - [x] Built-in fetch wrapper with normalized `ApiResponse`.
+2. **Error Handling (`src/errors.ts`)**
+   - [x] Implemented `VeylixError`, `VeylixAPIError`, and `VeylixAuthError`.
+3. **Marketplace Module (`src/modules/marketplace.ts`)**
+   - [x] Implemented `getListings()` and `verifyAsset()`.
+4. **Assets Module (`src/modules/assets.ts`)**
+   - [x] Implemented `getAssetDetails()` and `fetchIPFSMetadata()`.
+5. **Configuration**
    - [x] `tsconfig.json` optimized for strict type checking and modern Node runtimes.
    - [x] `tsup.config.ts` for blazing-fast builds.
 
