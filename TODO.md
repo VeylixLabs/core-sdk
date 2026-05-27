@@ -1,22 +1,22 @@
 # VEYLIX Core SDK - TODO
 
-## 🎯 Short-Term Goals (Sprint 1)
-- [x] **Marketplace Module:** 
-  - Create `src/modules/marketplace.ts`.
-  - Implement `getListings()` to fetch active 3D asset listings.
-  - Implement `verifyAsset()` for spatial integrity checks.
-- [x] **Assets Module:** 
-  - Create `src/modules/assets.ts`.
-  - Implement IPFS metadata fetching methods.
-  - Implement `getAssetDetails(id)` to retrieve model topology/textures data.
-- [x] **Error Handling:** 
-  - Create custom error classes (e.g., `VeylixAPIError`, `VeylixAuthError`) for better developer experience.
+## ✅ Short-Term Goals (Sprint 1) — DONE
+- [x] **Marketplace Module:** `getListings()`, `verifyAsset()`.
+- [x] **Assets Module:** `getAssetDetails()`, `fetchIPFSMetadata()` (race-condition safe).
+- [x] **Error Handling:** `VeylixAPIError`, `VeylixAuthError`.
 
-## 🚀 Mid-Term Goals (Sprint 2)
-- [x] **Wallet/Auth Integration:** Add methods to generate SIWE (Sign-In with Ethereum) payloads.
-- [x] **Testing:** Setup `Vitest` or `Jest` and write unit tests for the HTTP client mock requests.
-- [x] **Documentation:** Setup typedoc to automatically generate API references from TypeScript comments.
+## ✅ Mid-Term Goals (Sprint 2) — DONE
+- [x] **Wallet/Auth Integration:** SIWE payload generation.
+- [x] **Testing:** Vitest — 50 unit tests (100% module coverage).
+- [x] **WebSocket Tests:** `websocket.test.ts` — 23 tests covering all events, reconnection, heartbeat.
+- [x] **Documentation:** TypeDoc auto-generated API references.
 
-## 🌟 Long-Term Goals
-- [x] **CI/CD Pipeline:** Setup GitHub Actions to run tests and automatically publish to NPM on release tags.
-- [x] **WebSockets:** Add support for real-time orchestration telemetry updates.
+## ✅ Long-Term Goals — DONE
+- [x] **CI/CD Pipeline:** GitHub Actions — test on PR, publish on `v*` tags.
+- [x] **WebSockets:** Real-time telemetry with typed event system.
+
+## 🚀 Next: NPM Publish Checklist
+- [ ] Set `NPM_TOKEN` secret in GitHub repo → Settings → Secrets → Actions.
+- [ ] Create `CHANGELOG.md` for v0.1.0.
+- [ ] Create GitHub Release with tag `v0.1.0` to trigger CI/CD auto-publish.
+  - Or: run `npm publish` manually after `npm run build`.

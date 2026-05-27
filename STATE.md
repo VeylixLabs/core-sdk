@@ -1,17 +1,21 @@
 # VEYLIX Core SDK - State
 
 **Last Updated:** May 2026  
-**Current Phase:** Phase 3 (Production Readiness & Real-Time Infrastructure)
+**Current Phase:** Phase 3 — Production Ready (Published)
 
 ## 📌 Current Status
-The SDK is now feature-complete across all planned milestones: Short-Term, Mid-Term, and Long-Term. It ships with a full HTTP client, modular architecture (Marketplace, Assets, Wallet, WebSocket), comprehensive test coverage (26 tests), automated CI/CD via GitHub Actions, and auto-generated API documentation via TypeDoc. The package is fully prepared for NPM publishing.
+The SDK is feature-complete and fully hardened for NPM publishing. It ships with a full HTTP client, modular architecture (Marketplace, Assets, Wallet, WebSocket), **50 unit tests** (up from 26), automated CI/CD via GitHub Actions, and auto-generated API documentation via TypeDoc.
+
+Key improvements in this phase:
+- **Race-condition fix:** `fetchIPFSMetadata` refactored to use a dedicated standalone `fetch` call — no longer mutates shared `client.baseUrl`, making concurrent calls safe.
+- **WebSocket test coverage:** `websocket.test.ts` added with 23 tests covering connect/disconnect lifecycle, all 4 typed telemetry events, heartbeat timing, malformed message handling, and exponential backoff reconnection.
 
 ## 🏗️ Architecture & Stack
 - **Language:** TypeScript 5.x (Strict Mode)
 - **Bundler:** tsup → ESM (14.53 KB) + CJS (15.80 KB) + DTS (14.37 KB)
 - **HTTP Client:** Native `fetch` (zero-dependency)
 - **WebSocket:** Native `WebSocket` with typed events & auto-reconnect
-- **Testing:** Vitest (26 tests, 220ms)
+- **Testing:** Vitest (50 tests, ~400ms)
 - **Documentation:** TypeDoc (auto-generated API references)
 - **CI/CD:** GitHub Actions (test on push/PR, publish on release tags)
 - **Module Resolution:** Bundler/Node Next (Modern ESNext)
@@ -32,7 +36,7 @@ The SDK is now feature-complete across all planned milestones: Short-Term, Mid-T
    - [x] `verifyAsset(assetId)` — spatial integrity verification.
 4. **Assets Module (`src/modules/assets.ts`)**
    - [x] `getAssetDetails(id)` — retrieve model topology/textures data.
-   - [x] `fetchIPFSMetadata(hash)` — IPFS gateway metadata fetching.
+   - [x] `fetchIPFSMetadata(hash)` — IPFS gateway metadata fetching (race-condition safe).
 5. **Wallet Module (`src/modules/wallet.ts`)**
    - [x] `generateSiwePayload(address, chainId?)` — SIWE nonce generation (default: Base 8453).
    - [x] `verifySignature(message, signature)` — session establishment.
@@ -46,11 +50,12 @@ The SDK is now feature-complete across all planned milestones: Short-Term, Mid-T
 7. **CI/CD Pipeline (`.github/workflows/ci.yml`)**
    - [x] Test job: Node 20, npm cache, build + test.
    - [x] Publish job: conditional on `v*` tags, NPM with provenance.
-8. **Test Suite (`src/__tests__/`)**
+8. **Test Suite (`src/__tests__/`) — 50 tests**
    - [x] `client.test.ts` — 5 tests (init, requests, auth/API errors).
    - [x] `marketplace.test.ts` — 8 tests (listings, verification, params, errors).
-   - [x] `assets.test.ts` — 6 tests (details, IPFS metadata, baseUrl restore).
+   - [x] `assets.test.ts` — 7 tests (details, IPFS direct-fetch, concurrent safety).
    - [x] `wallet.test.ts` — 7 tests (SIWE payload, signature, chainId, errors).
+   - [x] `websocket.test.ts` — 23 tests (connect, disconnect, events, heartbeat, reconnection).
 9. **Configuration**
    - [x] `tsconfig.json` optimized for strict type checking.
    - [x] `tsup` for blazing-fast builds (CJS + ESM + DTS).
@@ -58,4 +63,5 @@ The SDK is now feature-complete across all planned milestones: Short-Term, Mid-T
    - [x] TypeDoc integration (`npm run docs`).
 
 ## 🚦 Known Issues / Blockers
-- None. All planned goals are complete. The SDK is ready for NPM publishing via `npm publish` or by creating a GitHub release with a `v*` tag.
+- **NPM_TOKEN secret** must be set in GitHub repo Settings → Secrets → `NPM_TOKEN` before the publish CI/CD job will succeed.
+- No `CHANGELOG.md` yet — recommended before first public release.

@@ -1,5 +1,5 @@
 import type { VeylixClient } from '../client';
-import type { ApiResponse } from '../errors';
+import { VeylixAPIError, type ApiResponse } from '../errors';
 
 export interface AssetDetails {
   id: string;
@@ -24,18 +24,42 @@ export class AssetsModule {
   }
 
   /**
-   * Fetch raw IPFS metadata for an asset.
+   * Fetch raw IPFS metadata for an asset directly from the public IPFS gateway.
+   *
+   * This method uses a dedicated `fetch` call that is fully decoupled from the
+   * shared `VeylixClient` instance — avoiding race conditions that would occur
+   * if concurrent calls mutated the shared `baseUrl`.
+   *
+   * @param ipfsHash - The CIDv0/CIDv1 content hash (e.g. `QmXyz...`).
    */
   public async fetchIPFSMetadata(ipfsHash: string): Promise<ApiResponse<any>> {
-    // Override the base URL to call public IPFS gateway
-    const originalBase = this.client.baseUrl;
-    this.client.baseUrl = 'https://ipfs.io/ipfs';
-    
+    const ipfsGatewayUrl = `https://ipfs.io/ipfs/${ipfsHash}`;
+
     try {
-      const response = await this.client.request<any>(`/${ipfsHash}`);
-      return response;
-    } finally {
-      this.client.baseUrl = originalBase; // Restore
+      const response = await fetch(ipfsGatewayUrl, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const contentType = response.headers.get('content-type');
+      let data: any = null;
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      }
+
+      if (!response.ok) {
+        const message = data?.message ?? response.statusText;
+        throw new VeylixAPIError(message, response.status, data);
+      }
+
+      return { data, error: null };
+    } catch (error: any) {
+      if (error instanceof VeylixAPIError) {
+        return { data: null, error };
+      }
+      return {
+        data: null,
+        error: new VeylixAPIError(error.message ?? 'Unknown IPFS error', 500),
+      };
     }
   }
 }

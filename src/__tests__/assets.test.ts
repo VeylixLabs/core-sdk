@@ -73,7 +73,7 @@ describe('AssetsModule', () => {
   // -----------------------------------------------------------------------
 
   describe('fetchIPFSMetadata()', () => {
-    it('should switch to the IPFS gateway and restore the original base URL', async () => {
+    it('should call the IPFS gateway directly with the correct URL', async () => {
       const ipfsData = { name: 'Crystal Mech', attributes: [{ trait: 'Rare' }] };
 
       global.fetch = vi.fn().mockResolvedValue({
@@ -82,22 +82,36 @@ describe('AssetsModule', () => {
         json: async () => ipfsData,
       });
 
-      const originalBaseUrl = client.baseUrl;
       const result = await client.assets.fetchIPFSMetadata('QmABC123');
 
-      // Verify the fetch was made against the IPFS gateway
+      // Must call the IPFS gateway directly — NOT the API base URL
       expect(global.fetch).toHaveBeenCalledWith(
         'https://ipfs.io/ipfs/QmABC123',
-        expect.any(Object),
+        expect.objectContaining({ headers: { 'Content-Type': 'application/json' } }),
       );
-
-      // Verify the base URL was restored after the call
-      expect(client.baseUrl).toBe(originalBaseUrl);
       expect(result.error).toBeNull();
       expect(result.data).toEqual(ipfsData);
     });
 
-    it('should restore base URL even when the IPFS request fails', async () => {
+    it('should NOT mutate the client baseUrl (concurrent-safe)', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        json: async () => ({}),
+      });
+
+      const originalBaseUrl = client.baseUrl;
+
+      // Simulate two concurrent calls — neither must interfere with client.baseUrl
+      await Promise.all([
+        client.assets.fetchIPFSMetadata('QmHash1'),
+        client.assets.fetchIPFSMetadata('QmHash2'),
+      ]);
+
+      expect(client.baseUrl).toBe(originalBaseUrl);
+    });
+
+    it('should return an error when the IPFS gateway responds with failure', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: false,
         status: 504,
@@ -106,24 +120,22 @@ describe('AssetsModule', () => {
         json: async () => ({ message: 'IPFS gateway timeout' }),
       });
 
-      const originalBaseUrl = client.baseUrl;
       const result = await client.assets.fetchIPFSMetadata('QmBADHASH');
 
-      // Base URL must be restored regardless of outcome
-      expect(client.baseUrl).toBe(originalBaseUrl);
       expect(result.data).toBeNull();
       expect(result.error).toBeInstanceOf(VeylixAPIError);
+      expect(result.error?.statusCode).toBe(504);
+      expect(result.error?.message).toBe('IPFS gateway timeout');
     });
 
-    it('should restore base URL even when fetch throws', async () => {
+    it('should handle network-level fetch failures gracefully', async () => {
       global.fetch = vi.fn().mockRejectedValue(new TypeError('IPFS unreachable'));
 
-      const originalBaseUrl = client.baseUrl;
       const result = await client.assets.fetchIPFSMetadata('QmFAIL');
 
-      expect(client.baseUrl).toBe(originalBaseUrl);
       expect(result.data).toBeNull();
       expect(result.error).toBeInstanceOf(VeylixAPIError);
+      expect(result.error?.message).toBe('IPFS unreachable');
     });
   });
 });
